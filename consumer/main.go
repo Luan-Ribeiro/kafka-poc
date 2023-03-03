@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
+	"log"
 	"os"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -11,9 +13,13 @@ var kafkaServer, kafkaTopic, kafkaGroupId string
 var kafkaConfig kafka.ConfigMap
 
 func init() {
-	kafkaServer = "localhost:9092"
-	kafkaTopic = "purchase"
-	kafkaGroupId = "poc-group"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("err loading: %v", err)
+	}
+	kafkaServer = os.Getenv("KAFKA_BROKER_URL")
+	kafkaTopic = os.Getenv("KAFKA_TOPIC")
+	kafkaGroupId = os.Getenv("KAFKA_GROUP_ID")
 
 	kafkaConfig = kafka.ConfigMap{"bootstrap.servers": kafkaServer, "group.id": kafkaGroupId, "go.events.channel.enable": true}
 

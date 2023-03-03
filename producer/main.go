@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
+	"log"
 	"os"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -11,8 +13,13 @@ var kafkaServer, kafkaTopic string
 var kafkaConfig kafka.ConfigMap
 
 func init() {
-	kafkaServer = "localhost:9092"
-	kafkaTopic = "purchase"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("err loading: %v", err)
+	}
+	kafkaServer = os.Getenv("KAFKA_BROKER_URL")
+	kafkaTopic = os.Getenv("KAFKA_TOPIC")
+
 	kafkaConfig = kafka.ConfigMap{
 		"bootstrap.servers": kafkaServer}
 
